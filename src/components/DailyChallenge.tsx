@@ -15,7 +15,7 @@ function getDailyEmotion(): { date: string; emotion: typeof emotions[0] } {
 }
 
 export function DailyChallenge({ challenge, onComplete }: Props) {
-  const { date, emotion } = useMemo(getDailyEmotion, []);
+  const { date, emotion } = useMemo(() => getDailyEmotion(), []);
   const isCompleted = challenge?.completed;
 
   return (

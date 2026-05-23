@@ -27,7 +27,9 @@ function loadState(): AppState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch {
+    // localStorage unavailable or JSON parse failed; use default state
+  }
   return { journal: [], challenges: [], unlockedEmotions: [] };
 }
 

@@ -12,7 +12,20 @@ export function EmotionWheel({ onSelect, unlockedEmotions }: Props) {
   }, {} as Record<Category, Emotion[]>);
 
   const totalEmotions = emotions.length;
-  let currentAngle = 0;
+
+  const categoryAngles = categories.reduce<{
+    angles: { startAngle: number; catAngleSize: number }[];
+    runningAngle: number;
+  }>(
+    (acc, cat) => {
+      const catAngleSize = (grouped[cat].length / totalEmotions) * 360;
+      return {
+        angles: [...acc.angles, { startAngle: acc.runningAngle, catAngleSize }],
+        runningAngle: acc.runningAngle + catAngleSize,
+      };
+    },
+    { angles: [], runningAngle: 0 }
+  ).angles;
 
   return (
     <div className="flex flex-col items-center gap-6 fade-in">
@@ -20,11 +33,9 @@ export function EmotionWheel({ onSelect, unlockedEmotions }: Props) {
       <p className="text-sm text-gray-400 max-w-md text-center">Tap any emotion to explore it. Unlocked emotions glow.</p>
       <div className="relative w-80 h-80 md:w-96 md:h-96">
         <svg viewBox="-120 -120 240 240" className="w-full h-full">
-          {categories.map(cat => {
+          {categories.map((cat, catIndex) => {
             const catEmotions = grouped[cat];
-            const catAngleSize = (catEmotions.length / totalEmotions) * 360;
-            const startAngle = currentAngle;
-            currentAngle += catAngleSize;
+            const { startAngle, catAngleSize } = categoryAngles[catIndex];
 
             return catEmotions.map((emotion, i) => {
               const sliceAngle = catAngleSize / catEmotions.length;
